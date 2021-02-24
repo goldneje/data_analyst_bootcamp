@@ -42,6 +42,7 @@ view: customer_behavior {
     type: tier
     tiers: [10, 20, 30, 50, 100, 500]
     sql: ${days_since_signup} ;;
+    style: integer
   }
 
   dimension: months_since_signup {
@@ -53,6 +54,8 @@ view: customer_behavior {
   dimension: months_since_signup_cohorts {
     type: tier
     tiers: [1, 3, 6, 9, 12, 24]
+    sql: ${months_since_signup} ;;
+    style: integer
   }
 
   dimension: total_gross_revenue {
