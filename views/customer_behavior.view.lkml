@@ -38,13 +38,25 @@ view: customer_behavior {
     sql_end: GETDATE() ;;
   }
 
+  dimension: days_since_signup_cohorts {
+    type: tier
+    tiers: [10, 20, 30, 50, 100, 500]
+    sql: ${days_since_signup} ;;
+  }
+
   dimension: months_since_signup {
     type: duration_month
     sql_start: ${sign_up_date} ;;
     sql_end: GETDATE() ;;
   }
 
+  dimension: months_since_signup_cohorts {
+    type: tier
+    tiers: [1, 3, 6, 9, 12, 24]
+  }
+
   dimension: total_gross_revenue {
+    hidden: yes
     description: "Total Revenue from completed sales (cancelled and returned orders excluded)"
     value_format: "$#,##0.00"
     type: number
@@ -108,6 +120,14 @@ view: customer_behavior {
     description: "Average revenue per customer across all customers and all time"
     type: number
     sql: (SELECT AVG(${total_gross_revenue}) FROM ${customer_behavior.SQL_TABLE_NAME}) ;;
+    value_format_name: usd
+  }
+
+  measure: total_gross_revenue_measure {
+    label: "Total Gross Revenue"
+    description: "Total Revenue from completed sales (cancelled and returned orders excluded)"
+    type: sum
+    sql: ${total_gross_revenue} ;;
     value_format_name: usd
   }
 
