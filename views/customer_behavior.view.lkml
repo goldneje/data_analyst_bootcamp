@@ -29,28 +29,19 @@ view: customer_behavior {
 
   dimension: sign_up_date {}
 
+  # These "since signup" dimensions need to be in a derived table because they use an aggregation in their calculation
+  # To get the average, I need to derive the sign-up date, but this might be a good use case for adding this dimension
+  # to the DWH
   dimension: days_since_signup {
     type: duration_day
     sql_start: ${sign_up_date} ;;
     sql_end: GETDATE() ;;
   }
 
-  measure: average_days_since_signup {
-    type: average
-    sql: ${days_since_signup} ;;
-    value_format_name: decimal_1
-  }
-
   dimension: months_since_signup {
     type: duration_month
     sql_start: ${sign_up_date} ;;
     sql_end: GETDATE() ;;
-  }
-
-  measure: average_months_since_signup {
-    type: average
-    sql: ${months_since_signup} ;;
-    value_format_name: decimal_1
   }
 
   dimension: total_gross_revenue {
@@ -94,11 +85,6 @@ view: customer_behavior {
     sql_end: GETDATE() ;;
   }
 
-  measure: average_days_since_latest_order {
-    type: number
-    sql: (SELECT AVG(${days_since_latest_order}) FROM ${customer_behavior.SQL_TABLE_NAME})
-  }
-
   dimension: total_lifetime_orders {
     description: "The total number of orders placed across all customers"
     type: number
@@ -135,5 +121,22 @@ view: customer_behavior {
     description: "Flag identifying whether a customer has more than 1 order"
     type: yesno
     sql: ${count_order_id} > 1 ;;
+  }
+
+  measure: average_days_since_latest_order {
+    type: number
+    sql: (SELECT AVG(${days_since_latest_order}) FROM ${customer_behavior.SQL_TABLE_NAME}) ;;
+  }
+
+  measure: average_days_since_signup {
+    type: average
+    sql: ${days_since_signup} ;;
+    value_format_name: decimal_1
+  }
+
+  measure: average_months_since_signup {
+    type: average
+    sql: ${months_since_signup} ;;
+    value_format_name: decimal_1
   }
 }
