@@ -5,6 +5,7 @@ view: inventory_items {
 
   dimension: id {
     primary_key: yes
+    hidden: yes
     type: number
     sql: ${TABLE}."ID" ;;
   }
@@ -12,6 +13,16 @@ view: inventory_items {
   dimension: cost {
     type: number
     sql: ${TABLE}."COST" ;;
+    hidden: no
+  }
+
+# Creating a hidden cost field for the Customers explore,
+# this will be used in calculations involving the cost.
+
+  dimension: cost_hidden {
+    type: number
+    sql: ${TABLE}."COST" ;;
+    hidden: yes
   }
 
   dimension_group: created {
@@ -44,13 +55,15 @@ view: inventory_items {
   }
 
   dimension: product_distribution_center_id {
+    group_label: "IDs"
     type: number
     sql: ${TABLE}."PRODUCT_DISTRIBUTION_CENTER_ID" ;;
   }
 
   dimension: product_id {
+    group_label: "IDs"
     type: number
-    # hidden: yes
+    hidden: yes
     sql: ${TABLE}."PRODUCT_ID" ;;
   }
 
@@ -84,7 +97,20 @@ view: inventory_items {
   }
 
   measure: count {
+    label: "Number of inventory items"
     type: count
     drill_fields: [id, product_name, products.name, products.id, order_items.count]
+  }
+
+  measure: total_cost {
+    type: sum
+    sql: ${cost} ;;
+    value_format_name: usd
+  }
+
+  measure: average_cost {
+    type: average
+    sql: ${cost} ;;
+    value_format_name: usd
   }
 }

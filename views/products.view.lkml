@@ -5,6 +5,7 @@ view: products {
 
   dimension: id {
     primary_key: yes
+    hidden: yes
     type: number
     sql: ${TABLE}."ID" ;;
   }
@@ -12,6 +13,17 @@ view: products {
   dimension: brand {
     type: string
     sql: ${TABLE}."BRAND" ;;
+    drill_fields: [category, name]
+    link: {
+      label: "Search for {{ brand }}"
+      url: "https://www.google.com/search?q={{ brand | url_encode }}"
+      icon_url: "https://www.google.com/favicon.ico"
+    }
+    link: {
+      label: "Find {{ brand }} on Facebook"
+      url: "https://www.facebook.com/search/top?q={{ brand | url_encode }}"
+      icon_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/F_icon.svg/1024px-F_icon.svg.png"
+    }
   }
 
   dimension: category {
@@ -22,6 +34,7 @@ view: products {
   dimension: cost {
     type: number
     sql: ${TABLE}."COST" ;;
+    value_format_name: usd
   }
 
   dimension: department {
@@ -31,11 +44,12 @@ view: products {
 
   dimension: distribution_center_id {
     type: number
-    # hidden: yes
+    hidden: yes
     sql: ${TABLE}."DISTRIBUTION_CENTER_ID" ;;
   }
 
   dimension: name {
+    label: "Item Name"
     type: string
     sql: ${TABLE}."NAME" ;;
   }
@@ -51,7 +65,22 @@ view: products {
   }
 
   measure: count {
+    label: "Number of Products"
     type: count
     drill_fields: [id, name, distribution_centers.name, distribution_centers.id, inventory_items.count]
+  }
+
+  measure: total_cost {
+    description: "Total cost of items sold from inventory"
+    type: sum
+    sql: ${cost} ;;
+    value_format_name: usd
+  }
+
+  measure: average_cost {
+    description: "Average cost of items sold from inventory"
+    type: average
+    sql: ${cost} ;;
+    value_format_name: usd
   }
 }
