@@ -16,14 +16,23 @@ persist_with: data_analyst_bootcamp_default_datagroup
 
 # explore: etl_jobs {}
 
-explore: order_sequence_2 {
+explore: customer_order_patterns {
+  view_name: order_sequence_2
+  view_label: "Order Sequence"
   join: order_sequence_3 {
+    view_label: "Order Sequence"
     sql_on: ${order_sequence_2.user_id} = ${order_sequence_3.user_id} ;;
     relationship: many_to_one
   }
 }
 
+# This is here only to generate the derived table order_sequence_2
 explore: order_sequence_1 {
+  hidden: yes
+}
+
+# This is here only to generate the derived table order_sequence_3
+explore: order_sequence_2 {
   hidden: yes
 }
 
