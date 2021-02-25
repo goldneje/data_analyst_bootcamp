@@ -1,4 +1,4 @@
-view: order_sequence {
+view: order_sequence_1 {
   derived_table: {
     explore_source: order_items {
       column: user_id {}
@@ -17,6 +17,7 @@ view: order_sequence {
   }
 
   dimension: order_id {
+    primary_key: yes
     type: number
   }
 
@@ -29,7 +30,7 @@ view: order_sequence {
     type: date
     sql: CASE
           WHEN LAG(${user_id}, 1) OVER(ORDER BY ${user_id}, ${order_sequence}) = ${user_id}
-            THEN LAG(${created_date}, 1) OVER(ORDER BY ${order_id}, ${order_sequence})
+            THEN LAG(${created_date}, 1) OVER(ORDER BY ${user_id}, ${order_sequence})
           ELSE NULL
           END ;;
   }
@@ -38,7 +39,7 @@ view: order_sequence {
     type: date
     sql: CASE
           WHEN LEAD(${user_id}, 1) OVER(ORDER BY ${user_id}, ${order_sequence}) = ${user_id}
-            THEN LEAD(${created_date}, 1) OVER(ORDER BY ${order_id}, ${order_sequence})
+            THEN LEAD(${created_date}, 1) OVER(ORDER BY ${user_id}, ${order_sequence})
           ELSE NULL
           END ;;
   }

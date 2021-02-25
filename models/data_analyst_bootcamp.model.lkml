@@ -3,6 +3,7 @@ label: "Fashion.ly Case Study - EH"
 
 # include all the views
 include: "/views/**/*.view"
+include: "/derived_tables/*.view"
 
 datagroup: data_analyst_bootcamp_default_datagroup {
   # sql_trigger: SELECT MAX(id) FROM etl_log;;
@@ -15,7 +16,16 @@ persist_with: data_analyst_bootcamp_default_datagroup
 
 # explore: etl_jobs {}
 
-explore: order_sequence {}
+explore: order_sequence_2 {
+  join: order_sequence_3 {
+    sql_on: ${order_sequence_2.user_id} = ${order_sequence_3.user_id} ;;
+    relationship: many_to_one
+  }
+}
+
+explore: order_sequence_1 {
+  hidden: yes
+}
 
 # explore: events {
 #   join: users {
