@@ -34,6 +34,20 @@ view: order_sequence {
           END ;;
   }
 
+  measure: subsequent_order_date {
+    type: date
+    sql: CASE
+          WHEN LEAD(${user_id}, 1) OVER(ORDER BY ${user_id}, ${order_sequence}) = ${user_id}
+            THEN LEAD(${created_date}, 1) OVER(ORDER BY ${order_id}, ${order_sequence})
+          ELSE NULL
+          END ;;
+  }
+
+  measure: has_subsequent_purchase {
+    type: yesno
+    sql: ${subsequent_order_date} IS NOT NULL ;;
+  }
+
   measure: is_first_purchase {
     type: yesno
     sql: ${previous_order_date} IS NULL ;;
