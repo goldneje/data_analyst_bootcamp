@@ -11,9 +11,11 @@ datagroup: data_analyst_bootcamp_default_datagroup {
 
 persist_with: data_analyst_bootcamp_default_datagroup
 
-explore: distribution_centers {}
+# explore: distribution_centers {}
 
-explore: etl_jobs {}
+# explore: etl_jobs {}
+
+explore: order_sequence {}
 
 # explore: events {
 #   join: users {
