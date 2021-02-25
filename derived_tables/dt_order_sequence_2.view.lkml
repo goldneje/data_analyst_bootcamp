@@ -79,8 +79,7 @@ view: order_sequence_2 {
     sql: SUM(${is_repeat_purchase_flag}) > 0 ;;
   }
 
-  # Mainly for debugging
-  # measure: number_of_orders{
-  #   type: count
-  # }
+  measure: number_of_orders{
+    type: count
+  }
 }

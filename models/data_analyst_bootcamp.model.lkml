@@ -19,6 +19,12 @@ persist_with: data_analyst_bootcamp_default_datagroup
 explore: customer_order_patterns {
   from: order_sequence_2
   view_label: "Order Sequence"
+
+  join: customer_behavior {
+    sql_on: ${customer_behavior.id} = ${customer_order_patterns.user_id} ;;
+    relationship: many_to_one
+  }
+
   join: order_sequence_3 {
     view_label: "Order Sequence"
     sql_on: ${customer_order_patterns.user_id} = ${order_sequence_3.user_id} ;;

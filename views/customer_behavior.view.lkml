@@ -78,7 +78,7 @@ view: customer_behavior {
   }
 
   dimension: count_order_id {
-    label: "Number of Orders"
+    label: "Number of Orders per Customer"
     type: number
   }
 
