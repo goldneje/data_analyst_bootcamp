@@ -12,7 +12,7 @@ view: customer_behavior {
       column: count_order_id {}
       column: first_order_date {}
       column: last_order_date {}
-      column: sign_up_date { field: users.created_date }
+      column: sign_up_orig { field: users.created_date }
     }
   }
   dimension: id {
@@ -27,14 +27,26 @@ view: customer_behavior {
 
   dimension: traffic_source {}
 
-  dimension: sign_up_date {}
+  dimension: sign_up_orig {
+    hidden: yes
+  }
+
+  dimension_group: sign_up {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      month
+    ]
+    sql: ${sign_up_orig} ;;
+  }
 
   # These "since signup" dimensions need to be in a derived table because they use an aggregation in their calculation
   # To get the average, I need to derive the sign-up date, but this might be a good use case for adding this dimension
   # to the DWH
   dimension: days_since_signup {
     type: duration_day
-    sql_start: ${sign_up_date} ;;
+    sql_start: ${sign_up_raw} ;;
     sql_end: GETDATE() ;;
   }
 
@@ -47,7 +59,7 @@ view: customer_behavior {
 
   dimension: months_since_signup {
     type: duration_month
-    sql_start: ${sign_up_date} ;;
+    sql_start: ${sign_up_raw} ;;
     sql_end: GETDATE() ;;
   }
 
@@ -126,14 +138,6 @@ view: customer_behavior {
     value_format_name: usd
   }
 
-  measure: total_gross_revenue_measure {
-    label: "Total Gross Revenue"
-    description: "Total Revenue from completed sales (cancelled and returned orders excluded)"
-    type: sum
-    sql: ${total_gross_revenue} ;;
-    value_format_name: usd
-  }
-
   dimension: is_active {
     description: "Flag identifying whether a customer is active or not (has purchased from the website within the last 90 days)"
     type: yesno
@@ -146,9 +150,25 @@ view: customer_behavior {
     sql: ${count_order_id} > 1 ;;
   }
 
+  measure: total_gross_revenue_measure {
+    label: "Total Gross Revenue"
+    description: "Total Revenue from completed sales (cancelled and returned orders excluded)"
+    type: sum
+    sql: ${total_gross_revenue} ;;
+    value_format_name: usd
+  }
+
+  measure: average_gross_revenue_measure {
+    label: "Average Gross Revenue"
+    description: "Total Revenue from completed sales (cancelled and returned orders excluded)"
+    type: average
+    sql: ${total_gross_revenue} ;;
+    value_format_name: usd
+  }
+
   measure: average_days_since_latest_order {
-    type: number
-    sql: (SELECT AVG(${days_since_latest_order}) FROM ${customer_behavior.SQL_TABLE_NAME}) ;;
+    type: average
+    sql: ${days_since_latest_order} ;;
   }
 
   measure: average_days_since_signup {
@@ -161,5 +181,19 @@ view: customer_behavior {
     type: average
     sql: ${months_since_signup} ;;
     value_format_name: decimal_1
+  }
+
+  measure: count_still_active {
+    label: "Number of Active Customers"
+    type: count
+    filters: [is_active: "Yes"]
+  }
+
+  measure: pct_still_active {
+    label: "Percent of Active Customers"
+    type: number
+    sql: ${count_still_active} / NULLIF(count(${id}), 0) ;;
+    value_format_name: percent_1
+    drill_fields: [id, days_since_signup, days_since_signup_cohorts, months_since_signup, months_since_signup_cohorts, sign_up_date, first_order_date, days_since_latest_order]
   }
 }

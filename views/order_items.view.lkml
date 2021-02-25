@@ -64,6 +64,7 @@ view: order_items {
     sql: ${TABLE}."ORDER_ID" ;;
   }
 
+
   dimension_group: returned {
     type: time
     timeframes: [
@@ -118,8 +119,14 @@ view: order_items {
   dimension: user_id {
     type: number
     group_label: "IDs"
-    hidden: yes
+    hidden: no
     sql: ${TABLE}."USER_ID" ;;
+  }
+
+  measure: order_sequence {
+    description: "Sequence number showing the order that a customer's purchases took place. Requires user_id and created_date fields"
+    type: number
+    sql: ROW_NUMBER() OVER(PARTITION BY ${user_id} ORDER BY ${created_date}) ;;
   }
 
   dimension: is_completed_sale {
