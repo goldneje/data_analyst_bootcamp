@@ -9,10 +9,18 @@ view: order_sequence_3 {
     }
   }
   dimension: user_id {
+    primary_key: yes
     type: number
   }
+
   dimension: has_repeat_purchases {
     label: "Has Repeat Purchases (Yes / No)"
     type: number
+  }
+
+  measure: pct_repeat_purchases {
+    type: number
+    sql: SUM(CAST( ${has_repeat_purchases} AS int )) / COUNT(${user_id}) ;;
+    value_format_name: percent_2
   }
 }
