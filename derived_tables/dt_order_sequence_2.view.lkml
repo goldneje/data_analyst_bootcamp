@@ -21,6 +21,7 @@ view: order_sequence_2 {
 
   dimension: order_id {
     primary_key: yes
+    hidden: yes
     type: number
   }
 
@@ -30,16 +31,17 @@ view: order_sequence_2 {
   }
 
   dimension: user_id {
+    hidden: yes
     type: number
   }
 
   dimension: has_subsequent_purchase {
-    label: "Order Sequence 1 Has Subsequent Purchase (Yes / No)"
+    label: "Has Subsequent Purchase (Yes / No)"
     type: number
   }
 
   dimension: is_first_purchase {
-    label: "Order Sequence 1 Is First Purchase (Yes / No)"
+    label: "Is First Purchase (Yes / No)"
     type: number
   }
 

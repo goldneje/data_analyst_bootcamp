@@ -17,11 +17,11 @@ persist_with: data_analyst_bootcamp_default_datagroup
 # explore: etl_jobs {}
 
 explore: customer_order_patterns {
-  view_name: order_sequence_2
+  from: order_sequence_2
   view_label: "Order Sequence"
   join: order_sequence_3 {
     view_label: "Order Sequence"
-    sql_on: ${order_sequence_2.user_id} = ${order_sequence_3.user_id} ;;
+    sql_on: ${customer_order_patterns.user_id} = ${order_sequence_3.user_id} ;;
     relationship: many_to_one
   }
 }

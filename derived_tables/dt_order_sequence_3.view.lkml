@@ -12,7 +12,7 @@ view: order_sequence_3 {
     type: number
   }
   dimension: has_repeat_purchases {
-    label: "Order Sequence 2 Has Repeat Purchases (Yes / No)"
+    label: "Has Repeat Purchases (Yes / No)"
     type: number
   }
 }
