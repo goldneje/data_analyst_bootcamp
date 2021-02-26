@@ -17,17 +17,39 @@ persist_with: data_analyst_bootcamp_default_datagroup
 # explore: etl_jobs {}
 
 explore: customer_order_patterns {
-  from: order_sequence_2
-  view_label: "Order Sequence"
+  from: order_items
+  view_label: "Order Details"
+  fields: [
+    ALL_FIELDS*
+  ]
+
+  join: order_sequence_2 {
+    view_label: "Customer Order Patterns"
+    sql_on: ${customer_order_patterns.order_id} = ${order_sequence_2.order_id} ;;
+    relationship: many_to_one
+    }
 
   join: customer_behavior {
-    sql_on: ${customer_behavior.id} = ${customer_order_patterns.user_id} ;;
+    sql_on: ${customer_behavior.id} = ${order_sequence_2.user_id} ;;
     relationship: many_to_one
   }
 
   join: order_sequence_3 {
-    view_label: "Order Sequence"
-    sql_on: ${customer_order_patterns.user_id} = ${order_sequence_3.user_id} ;;
+    view_label: "Customer Order Patterns"
+    sql_on: ${order_sequence_2.user_id} = ${order_sequence_3.user_id} ;;
+    relationship: many_to_one
+  }
+
+  join: inventory_items {
+    view_label: "Product Details"
+    sql_on: ${customer_order_patterns.inventory_item_id} = ${inventory_items.id};;
+    relationship: many_to_one
+    fields: [inventory_items.cost_hidden, inventory_items.product_id]
+  }
+
+  join: products {
+    view_label: "Product Details"
+    sql_on: ${inventory_items.product_id} = ${products.id} ;;
     relationship: many_to_one
   }
 }
