@@ -15,13 +15,13 @@ view: products {
     sql: ${TABLE}."BRAND" ;;
     drill_fields: [category, name]
     link: {
-      label: "Search for {{ brand }}"
-      url: "https://www.google.com/search?q={{ brand | url_encode }}"
+      label: "Search for {{ value }}"
+      url: "https://www.google.com/search?q={{ value | url_encode }}"
       icon_url: "https://www.google.com/favicon.ico"
     }
     link: {
-      label: "Find {{ brand }} on Facebook"
-      url: "https://www.facebook.com/search/top?q={{ brand | url_encode }}"
+      label: "Find {{ value }} on Facebook"
+      url: "https://www.facebook.com/search/top?q={{ value | url_encode }}"
       icon_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/F_icon.svg/1024px-F_icon.svg.png"
     }
   }
@@ -29,6 +29,13 @@ view: products {
   dimension: category {
     type: string
     sql: ${TABLE}."CATEGORY" ;;
+  }
+
+  dimension: brand_category_id {
+    hidden: yes
+    description: "Creating a primary key for brand and category rankings to join tables"
+    type: string
+    sql: CONCAT(${brand}, ${category}) ;;
   }
 
   dimension: cost {

@@ -54,7 +54,7 @@ view: users {
     sql_end: GETDATE() ;;
   }
 
-  dimension: is_current_day {
+  dimension: is_before_current_day {
     hidden: yes
     description: "Flag for whether something is at or below the current day for Month to Date analysis"
     type: yesno
@@ -152,7 +152,7 @@ view: users {
     type: count
     drill_fields: [default_count_drill*]
     filters: [
-      is_current_day: "Yes",
+      is_before_current_day: "Yes",
       created_date: "after 1 month ago"
     ]
   }

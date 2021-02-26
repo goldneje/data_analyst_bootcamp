@@ -21,20 +21,35 @@ view: order_items {
       month,
       month_num,
       day_of_month,
+      day_of_year,
       quarter,
       year
     ]
     sql: ${TABLE}."CREATED_AT" ;;
   }
 
-  dimension: is_current_day {
+  dimension: is_before_current_day_in_year {
+    hidden: yes
     type: yesno
-    sql: ${created_day_of_month} <= EXTRACT('day', GETDATE()) ;;
+    sql: ${created_day_of_year} <= EXTRACT('day', GETDATE()) ;;
   }
 
   dimension: is_current_month {
+    hidden: yes
     type: yesno
     sql: ${created_month_num} = EXTRACT('month', GETDATE()) ;;
+  }
+
+  dimension: is_current_year {
+    hidden: yes
+    type: yesno
+    sql: ${created_year} = EXTRACT('year', GETDATE()) ;;
+  }
+
+  dimension: is_previous_year {
+    hidden: yes
+    type: yesno
+    sql: ${created_year} = EXTRACT('year', GETDATE()) - 1 ;;
   }
 
   dimension_group: delivered {
@@ -141,12 +156,6 @@ view: order_items {
     drill_fields: [detail*]
   }
 
-  dimension: total_items_sold {
-    hidden: yes
-    type: number
-    sql: (SELECT count(${id}) FROM ${TABLE}) ;;
-  }
-
   measure: count_order_id {
     label: "Number of Orders"
     type: count_distinct
@@ -194,6 +203,44 @@ view: order_items {
     direction: "column"
     sql: ${total_gross_revenue} ;;
     value_format: "0.000\%"
+  }
+
+  measure: cytd_revenue {
+    label: "CYTD Revenue"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [
+      is_current_year: "Yes",
+      is_before_current_day_in_year: "Yes"
+    ]
+    value_format_name: usd
+  }
+
+  measure: lytd_revenue {
+    label: "LYTD Revenue"
+    type: sum
+    sql: ${sale_price} ;;
+    filters: [
+      is_previous_year: "Yes",
+      is_before_current_day_in_year: "Yes"
+    ]
+    value_format_name: usd
+  }
+
+  measure: yoy_growth {
+    label: "Gross Revenue - Year over Year Growth"
+    type: number
+    sql: ${cytd_revenue} - ${lytd_revenue} ;;
+    value_format_name: usd
+  }
+
+  measure: yoy_pct_growth {
+    label: "Gross Revenue - Year over Year Growth (%)"
+    type: number
+    sql:
+      CASE
+        WHEN ${lytd_revenue} = 0 THEN -999 ELSE ${yoy_growth} / ${lytd_revenue} END;;
+    value_format_name: percent_2
   }
 
   measure: total_gross_margin_amount {
@@ -269,13 +316,6 @@ view: order_items {
     value_format_name: usd
   }
 
-  measure: percent_of_total_volume {
-    description: "Percent of total items sold"
-    type: number
-    sql: ${count} / ${total_items_sold} ;;
-    value_format_name: percent_2
-  }
-
   measure: first_order_date {
     type: date
     sql: min(${created_date}) ;;
@@ -284,6 +324,66 @@ view: order_items {
   measure: last_order_date {
     type: date
     sql: max(${created_date}) ;;
+  }
+
+  measure: category_revenue_rank {
+    hidden: yes
+    description: "Rank based on revenue by category"
+    type: number
+    sql: RANK() OVER(PARTITION BY ${products.category} ORDER BY ${total_gross_revenue} DESC) ;;
+  }
+
+  measure: brand_revenue_rank {
+    hidden: yes
+    description: "Rank based on revenue by brand"
+    type: number
+    sql: RANK() OVER(ORDER BY ${total_gross_revenue} DESC) ;;
+  }
+
+  measure: category_yoy_growth_rank{
+    hidden: no
+    description: "Rank based on Year-over-year growth per category"
+    type: number
+    sql: RANK() OVER(PARTITION BY ${products.category} ORDER BY ${yoy_growth} DESC) ;;
+  }
+
+  measure: brand_yoy_growth_rank {
+    hidden: no
+    description: "Rank based on year-over-year growth per brand"
+    type: number
+    sql: RANK() OVER(ORDER BY ${yoy_growth} DESC) ;;
+  }
+
+  measure: category_yoy_pct_growth_rank{
+    hidden: no
+    description: "Rank based on Year-over-year growth per category"
+    type: number
+    sql: RANK() OVER(PARTITION BY ${products.category} ORDER BY ${yoy_pct_growth} DESC) ;;
+  }
+
+  measure: brand_yoy_pct_growth_rank {
+    hidden: no
+    description: "Rank based on year-over-year growth per brand"
+    type: number
+    sql: CASE
+            WHEN ${yoy_pct_growth} IS NOT NULL
+            THEN RANK() OVER(ORDER BY ${yoy_pct_growth} DESC)
+            ELSE -9999
+            END;;
+  }
+
+  measure: category_volume_rank {
+    hidden: yes
+    description: "Rank based on order volume by category"
+    type: number
+    sql: RANK() OVER(PARTITION BY ${products.category} ORDER BY ${count} DESC) ;;
+  }
+
+  measure: brand_volume_rank {
+    hidden: yes
+    description: "Rank based on order volume by category"
+    type: number
+    sql: RANK() OVER(ORDER BY ${count} DESC) ;;
   }
 
   # ----- Sets of fields for drilling ------
@@ -305,6 +405,37 @@ view: order_items {
       , order_items.count_returned_items
       , order_items.item_return_rate
       , order_items.count_users_return
+    ]
+  }
+
+  set: brand_comparison_set {
+    fields: [
+      cytd_revenue,
+      lytd_revenue,
+      yoy_growth,
+      yoy_pct_growth,
+      is_current_year,
+      is_previous_year,
+      is_before_current_day_in_year,
+      created_date,
+      created_month,
+      created_year,
+      created_month_num,
+      brand_yoy_growth_rank,
+      brand_yoy_pct_growth_rank,
+      brand_revenue_rank,
+      brand_volume_rank,
+      category_yoy_growth_rank,
+      category_yoy_pct_growth_rank,
+      category_revenue_rank,
+      category_volume_rank,
+      order_items.id,
+      order_items.count,
+      order_items.status,
+      order_items.is_completed_sale,
+      order_items.sale_price,
+      order_items.total_gross_revenue,
+      order_items.pct_of_total_gross_revenue,
     ]
   }
 }
