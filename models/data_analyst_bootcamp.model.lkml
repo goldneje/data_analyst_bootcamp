@@ -40,6 +40,7 @@ explore: customer_order_patterns {
     relationship: many_to_one
   }
 
+# Necessary for revenue calculations in the order_items view
   join: inventory_items {
     view_label: "Product Details"
     sql_on: ${customer_order_patterns.inventory_item_id} = ${inventory_items.id};;
