@@ -141,6 +141,12 @@ view: order_items {
     drill_fields: [detail*]
   }
 
+  dimension: total_items_sold {
+    hidden: yes
+    type: number
+    sql: (SELECT count(${id}) FROM ${TABLE}) ;;
+  }
+
   measure: count_order_id {
     label: "Number of Orders"
     type: count_distinct
@@ -263,6 +269,13 @@ view: order_items {
     value_format_name: usd
   }
 
+  measure: percent_of_total_volume {
+    description: "Percent of total items sold"
+    type: number
+    sql: ${count} / ${total_items_sold} ;;
+    value_format_name: percent_2
+  }
+
   measure: first_order_date {
     type: date
     sql: min(${created_date}) ;;
@@ -272,8 +285,6 @@ view: order_items {
     type: date
     sql: max(${created_date}) ;;
   }
-
-
 
   # ----- Sets of fields for drilling ------
   set: detail {
