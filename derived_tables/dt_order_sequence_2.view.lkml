@@ -57,6 +57,7 @@ view: order_sequence_2 {
     type: duration_day
     sql_start: ${previous_order_date} ;;
     sql_end: ${created_date} ;;
+    value_format_name: decimal_1
   }
 
   dimension: is_repeat_purchase_flag {
@@ -71,6 +72,7 @@ view: order_sequence_2 {
   measure: average_days_between_orders {
     type: average
     sql: ${days_between_orders} ;;
+    value_format_name: decimal_1
   }
 
   measure: has_repeat_purchases {
