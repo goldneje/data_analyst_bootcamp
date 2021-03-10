@@ -80,6 +80,13 @@ view: order_items {
     ]
     sql: ${TABLE}."SHIPPED_AT" ;;
   }
+  ##BootCamp
+  dimension_group: diff_shipping_days {
+    type: duration
+    intervals:  [hour, day, week]
+    sql_start: ${shipped_raw} ;;
+    sql_end:  ${delivered_raw} ;;
+  }
 
   dimension: status {
     type: string
@@ -107,5 +114,85 @@ view: order_items {
       users.id,
       users.first_name
     ]
+
+    #Part 0 of Case Study
+}
+  measure: total_sale_price {
+    type:  sum
+    sql: ${sale_price};;
+    value_format_name: usd
+  }
+  measure: average_sale_price {
+    type:  average
+    sql: ${sale_price};;
+    value_format_name: usd
+  }
+  measure: total_revenue {
+    type:  sum
+    sql: ${sale_price};;
+    value_format_name: usd
+    filters: [order_items.status: "Processing"]
+  }
+  measure: total_gross_margin_amount {
+    type:  number
+    sql: ${total_revenue} - ${inventory_items.total_cost};;
+    value_format_name: usd
+  }
+  measure: average_gross_margin_amount {
+    type:  number
+    sql: ${total_gross_margin_amount} / ${products.count} ;;
+    value_format_name: usd
+  }
+  measure: returned_items_count {
+    type:  count
+    filters: [order_items.status: "Returned"]
+  }
+
+  measure: all_item_count {
+    type:  count
+  }
+  measure: item_return_rate {
+    type:  number
+    sql:  ${returned_items_count} / ${all_item_count} ;;
+  }
+  measure: gross_margin_percent {
+    type:  number
+    sql: ${total_gross_margin_amount} / ${total_revenue};;
+    drill_fields: [product.category, product.brand]
+  }
+  measure: revenue_percent {
+    type:  number
+    sql: ${sale_price} / ${total_revenue};;
+    drill_fields: [product.category, product.brand]
+  }
+  measure: sale_per_customer {
+    type:  number
+    sql: ${total_sale_price} / ${users.count} ;;
+    value_format_name: usd
+    drill_fields: [users.age_tiers, users.genders]
+   # customer information, such as customer age groups and genders.
+  }
+  dimension: age_tier {
+    type:  tier
+    tiers:  [15,26,36,51,66]
+    style:  integer
+    sql: ${users.age} ;;
+  }
+
+  dimension: location {
+    type: location
+    sql_latitude: ${distribution_centers.latitude} ;;
+    sql_longitude: ${distribution_centers.longitude} ;;
+  }
+ # measure: count_of_returns {
+ #   type:  count
+ #   sql:  ${returned} ;;}
+
+#Part 1 Case Study
+  dimension: customer_order_tier {
+    type:  tier
+    tiers:  [1,2,3,6,10]
+    style:  integer
+    sql: ${users.id} ;;
   }
 }

@@ -39,6 +39,11 @@ view: users {
     sql: ${TABLE}."CREATED_AT" ;;
   }
 
+  dimension:  city_state {
+    type:  string
+    sql:${city} || ', ' || ${state} ;;
+
+  }
   dimension: email {
     type: string
     sql: ${TABLE}."EMAIL" ;;
@@ -88,4 +93,5 @@ view: users {
     type: count
     drill_fields: [id, last_name, first_name, events.count, order_items.count]
   }
+
 }

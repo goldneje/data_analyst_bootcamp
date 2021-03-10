@@ -60,6 +60,11 @@ explore: order_items {
     sql_on: ${products.distribution_center_id} = ${distribution_centers.id} ;;
     relationship: many_to_one
   }
+  join: events {
+    type: left_outer
+    sql_on: ${events.user_id} = ${order_items.user_id} ;;
+    relationship: many_to_one
+  }
 }
 
 explore: products {
@@ -70,4 +75,13 @@ explore: products {
   }
 }
 
+
 explore: users {}
+
+explore: customer {
+  from:  dt_customer
+#  fields: [customer_order_tier, customer_revenue_tier, total_sale_price, average_sale_price, total_revenue,
+#   total_gross_margin_amount, average_gross_margin_amount,  returned_items_count, all_item_count, item_return_rate,
+#  gross_margin_percent, revenue_percent, sale_per_customer  ]
+#  from: order_items {}
+}
