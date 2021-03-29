@@ -94,4 +94,9 @@ view: users {
     drill_fields: [id, last_name, first_name, events.count, order_items.count]
   }
 
+  measure: website_first_time{
+    type: date
+    sql:  min(${created_date}) ;;
+  }
+
 }

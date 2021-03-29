@@ -99,6 +99,7 @@ view: order_items {
     sql: ${TABLE}."USER_ID" ;;
   }
 
+
   measure: count {
     type: count
     drill_fields: [detail*]
@@ -131,8 +132,9 @@ view: order_items {
     type:  sum
     sql: ${sale_price};;
     value_format_name: usd
-    filters: [order_items.status: "Processing"]
-  }
+    filters: [status : "-Cancelled, -Returned"]
+    }
+
   measure: total_gross_margin_amount {
     type:  number
     sql: ${total_revenue} - ${inventory_items.total_cost};;
@@ -142,6 +144,8 @@ view: order_items {
     type:  number
     sql: ${total_gross_margin_amount} / ${products.count} ;;
     value_format_name: usd
+    #filters: [status : "-Cancelled, -Returned"]
+
   }
   measure: returned_items_count {
     type:  count
@@ -154,16 +158,19 @@ view: order_items {
   measure: item_return_rate {
     type:  number
     sql:  ${returned_items_count} / ${all_item_count} ;;
+
   }
-  measure: gross_margin_percent {
-    type:  number
-    sql: ${total_gross_margin_amount} / ${total_revenue};;
-    drill_fields: [product.category, product.brand]
+
+  measure: gross_margin_percentage {
+    type: number
+    sql: ${total_gross_margin_amount} / ${total_revenue} ;;
+    value_format_name: percent_2
   }
   measure: revenue_percent {
     type:  number
     sql: ${sale_price} / ${total_revenue};;
     drill_fields: [product.category, product.brand]
+
   }
   measure: sale_per_customer {
     type:  number
@@ -184,15 +191,16 @@ view: order_items {
     sql_latitude: ${distribution_centers.latitude} ;;
     sql_longitude: ${distribution_centers.longitude} ;;
   }
- # measure: count_of_returns {
- #   type:  count
- #   sql:  ${returned} ;;}
 
-#Part 1 Case Study
-  dimension: customer_order_tier {
-    type:  tier
-    tiers:  [1,2,3,6,10]
-    style:  integer
-    sql: ${users.id} ;;
+  measure: first_order_time{
+    type: date
+    sql:  min(${created_date}) ;;
   }
+  measure: last_order_time{
+    type: date
+    sql:  max(${created_date}) ;;
+  }
+
+
+
 }
