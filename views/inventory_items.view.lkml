@@ -12,6 +12,7 @@ view: inventory_items {
   dimension: cost {
     type: number
     sql: ${TABLE}."COST" ;;
+    value_format_name: usd
   }
 
   dimension_group: created {
@@ -83,18 +84,24 @@ view: inventory_items {
     sql: ${TABLE}."SOLD_AT" ;;
   }
 
+  measure: avg_cost {
+    view_label: "Order Items"
+    type: average
+    sql: ${cost} ;;
+    value_format_name: usd
+  }
+
+
   measure: count {
     type: count
     drill_fields: [id, product_name, products.name, products.id, order_items.count]
   }
+
   measure: total_cost {
-    type:  sum
-    sql: ${cost};;
+    view_label: "Order Items"
+    type: sum
+    sql: ${cost} ;;
     value_format_name: usd
   }
-  measure: average_cost {
-    type:  average
-    sql: ${cost};;
-    value_format_name: usd
-  }
+
 }
