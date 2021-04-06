@@ -1,6 +1,8 @@
 connection: "snowlooker"
 label: "Fashion.ly Case Study - EH"
 
+################## TEST COMMENT FOR PUSHING TO REMOTE BRANCH ######################
+
 # include all the views
 include: "/views/**/*.view"
 include: "/derived_tables/*.view"
