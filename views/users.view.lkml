@@ -85,7 +85,7 @@ view: users {
   }
 
   dimension: first_name {
-    hidden: yes
+    hidden: no
     type: string
     sql: ${TABLE}."FIRST_NAME" ;;
   }
@@ -96,12 +96,13 @@ view: users {
   }
 
   dimension: last_name {
-    hidden: yes
+    hidden: no
     type: string
     sql: ${TABLE}."LAST_NAME" ;;
   }
 
   dimension: name {
+    label: "Full Name"
     type: string
     sql: CONCAT(${first_name}, ' ', ${last_name}) ;;
   }

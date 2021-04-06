@@ -148,34 +148,30 @@ explore: order_sequence_2 {
 # }
 
 explore: order_items {
-  # sql_always_where: ${returned_raw} IS NULL AND ${status} = 'Complete' ;;
-  # sql_always_having: ${total_sale_price} > 200 AND ${count} > 2 ;;
-  # always_filter: {
-  #   filters: [order_items.created_date: "after 30 days ago"]
-  # }
-  # conditionally_filter: {
-  #   filters: [order_items.created_year: "after 2 years ago"]
-  #   unless: [users.id]
-  # }
+  view_label: "1) Order Items"
   join: inventory_items {
+    view_label: "4) Inventory Items"
     type: left_outer
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
     relationship: one_to_one
   }
 
   join: users {
+    view_label: "2) Users"
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
     relationship: many_to_one
   }
 
   join: products {
+    view_label: "3) Products"
     type: left_outer
     sql_on: ${inventory_items.product_id} = ${products.id} ;;
     relationship: many_to_one
   }
 
   join: distribution_centers {
+    view_label: "5) Distribution Centers"
     type: left_outer
     sql_on: ${products.distribution_center_id} = ${distribution_centers.id} ;;
     relationship: many_to_one

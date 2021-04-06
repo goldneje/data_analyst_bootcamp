@@ -95,6 +95,7 @@ view: order_items {
   }
 
   dimension: sale_price {
+    hidden: yes
     type: number
     sql: ${TABLE}."SALE_PRICE" ;;
     value_format_name: usd
@@ -163,7 +164,6 @@ view: order_items {
   }
 
   measure: total_sale_price {
-    description: "Total sales from items sold"
     group_label: "Sales Calculations"
     type: sum
     sql: ${sale_price} ;;
@@ -193,6 +193,7 @@ view: order_items {
     sql: ${sale_price} ;;
     filters: [is_completed_sale: "Yes"]
     value_format_name: usd
+    drill_fields: [revenue_drill*]
   }
 
   measure: pct_of_total_gross_revenue {
@@ -206,6 +207,7 @@ view: order_items {
   }
 
   measure: cytd_revenue {
+    group_label: "Sales Calculations"
     label: "CYTD Revenue"
     type: sum
     sql: ${sale_price} ;;
@@ -217,6 +219,7 @@ view: order_items {
   }
 
   measure: lytd_revenue {
+    group_label: "Sales Calculations"
     label: "LYTD Revenue"
     type: sum
     sql: ${sale_price} ;;
@@ -228,6 +231,7 @@ view: order_items {
   }
 
   measure: yoy_growth {
+    group_label: "Year Over Year Calculations"
     label: "Gross Revenue - Year over Year Growth"
     type: number
     sql: ${cytd_revenue} - ${lytd_revenue} ;;
@@ -235,6 +239,7 @@ view: order_items {
   }
 
   measure: yoy_pct_growth {
+    group_label: "Year Over Year Calculations"
     label: "Gross Revenue - Year over Year Growth (%)"
     type: number
     sql:
@@ -250,7 +255,7 @@ view: order_items {
     sql: ${sale_price} - ${inventory_items.cost_hidden} ;;
     filters: [is_completed_sale: "Yes"]
     value_format_name: usd
-    drill_fields: [products.category, products.brand, total_gross_margin_amount]
+    drill_fields: [revenue_drill*]
   }
 
   measure: average_gross_margin_amount {
@@ -287,6 +292,8 @@ view: order_items {
   }
 
   measure: count_users_return {
+    group_label: "User Calculations"
+    view_label: "2) Users"
     label: "Number of Customers Returning Items"
     description: "Number of users who have returned an item at some point"
     type: count_distinct
@@ -295,12 +302,16 @@ view: order_items {
   }
 
   measure: count_users {
+    group_label: "User Calculations"
+    view_label: "2) Users"
     label: "Number of Customers"
     type: count_distinct
     sql: ${user_id} ;;
     }
 
   measure: user_return_pct {
+    group_label: "User Calculations"
+    view_label: "2) Users"
     label: "Customers with Returns %"
     description: "Number of Customers Returning Items / Total number of customers"
     type: number
@@ -309,6 +320,8 @@ view: order_items {
   }
 
   measure: average_spend_per_user {
+    group_label: "User Calculations"
+    view_label: "2) Users"
     label: "Average Spend per Customer"
     description: "Total Sale Price / Total Number of Customers"
     type: number
@@ -327,6 +340,7 @@ view: order_items {
   }
 
   measure: category_revenue_rank {
+    group_label: "Ranks"
     hidden: yes
     description: "Rank based on revenue by category"
     type: number
@@ -334,6 +348,7 @@ view: order_items {
   }
 
   measure: brand_revenue_rank {
+    group_label: "Ranks"
     hidden: yes
     description: "Rank based on revenue by brand"
     type: number
@@ -341,6 +356,7 @@ view: order_items {
   }
 
   measure: category_yoy_growth_rank{
+    group_label: "Year Over Year Calculations"
     hidden: no
     description: "Rank based on Year-over-year growth per category"
     type: number
@@ -348,6 +364,7 @@ view: order_items {
   }
 
   measure: brand_yoy_growth_rank {
+    group_label: "Year Over Year Calculations"
     hidden: no
     description: "Rank based on year-over-year growth per brand"
     type: number
@@ -355,6 +372,7 @@ view: order_items {
   }
 
   measure: category_yoy_pct_growth_rank{
+    group_label: "Year Over Year Calculations"
     hidden: no
     description: "Rank based on Year-over-year growth per category"
     type: number
@@ -362,6 +380,7 @@ view: order_items {
   }
 
   measure: brand_yoy_pct_growth_rank {
+    group_label: "Year Over Year Calculations"
     hidden: no
     description: "Rank based on year-over-year growth per brand"
     type: number
@@ -373,6 +392,7 @@ view: order_items {
   }
 
   measure: category_volume_rank {
+    group_label: "Ranks"
     hidden: yes
     description: "Rank based on order volume by category"
     type: number
@@ -380,6 +400,7 @@ view: order_items {
   }
 
   measure: brand_volume_rank {
+    group_label: "Ranks"
     hidden: yes
     description: "Rank based on order volume by category"
     type: number
@@ -387,6 +408,10 @@ view: order_items {
   }
 
   # ----- Sets of fields for drilling ------
+  set: revenue_drill {
+    fields: [products.category, products.brand, total_gross_margin_amount]
+  }
+
   set: detail {
     fields: [
       id,

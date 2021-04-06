@@ -82,6 +82,7 @@ view: products {
     type: sum
     sql: ${cost} ;;
     value_format_name: usd
+    drill_fields: [default_product_drill*]
   }
 
   measure: average_cost {
@@ -89,5 +90,10 @@ view: products {
     type: average
     sql: ${cost} ;;
     value_format_name: usd
+    drill_fields: [default_product_drill*]
+  }
+
+  set: default_product_drill {
+    fields: [brand, name, retail_price]
   }
 }
