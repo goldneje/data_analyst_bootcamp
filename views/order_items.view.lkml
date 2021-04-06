@@ -95,6 +95,7 @@ view: order_items {
   }
 
   dimension: sale_price {
+    group_label: "NEW LABEL"
     hidden: yes
     type: number
     sql: ${TABLE}."SALE_PRICE" ;;
@@ -146,6 +147,7 @@ view: order_items {
   }
 
   dimension: is_completed_sale {
+    group_label: "NEW LABEL"
     description: "Flag for referencing completed sales, a completed sale is any sale that is not returned or cancelled"
     type: yesno
     sql: ${status} IN ('Complete', 'Processing', 'Shipped');; # SQL needed single quotes for this conditional
@@ -164,23 +166,24 @@ view: order_items {
   }
 
   measure: total_sale_price {
-    group_label: "Sales Calculations"
+    group_label: "NEW LABEL"
+    
     type: sum
     sql: ${sale_price} ;;
     value_format_name: usd
   }
 
   measure: average_sale_price {
+    group_label: "NEW LABEL"
     description: "Average sale price of items sold"
-    group_label: "Sales Calculations"
     type: average
     sql: ${sale_price} ;;
     value_format_name: usd
   }
 
   measure: cumulative_total_sales {
+    group_label: "NEW LABEL"
     description: "Cumulative total sales from items sold (also known as a running total)"
-    group_label: "Sales Calculations"
     type: running_total
     sql: ${total_sale_price} ;;
     value_format_name: usd
