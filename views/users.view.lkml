@@ -14,10 +14,24 @@ view: users {
     sql: ${TABLE}."AGE" ;;
   }
 
+  dimension: age_demographic {
+    type: tier
+    sql: ${age} ;;
+    tiers: [15,26,36,51,66]
+    style: integer
+  }
+
   dimension: age_tier {
     type: tier
     style: integer
     tiers: [15, 26, 36, 51, 66]
+    sql: ${age} ;;
+  }
+
+  dimension: age_buckets{
+    type:  tier
+    style: integer
+    tiers: [18, 25, 35, 45, 55, 65, 75, 90]
     sql: ${age} ;;
   }
 
@@ -52,6 +66,23 @@ view: users {
     type: duration_day
     sql_start: min(${created_date}) ;;
     sql_end: GETDATE() ;;
+  }
+
+  dimension_group: as_a_customer {
+    type:  duration
+    intervals: [hour, day, week, month, year]
+    sql_start: ${created_raw} ;;
+    sql_end: current_date ;;
+  }
+
+  dimension: is_new_user {
+    type: yesno
+    sql: ${days_since_creation} < 90 ;;
+  }
+
+  dimension: days_since_creation {
+    type: number
+    sql: datediff('day', ${created_raw}, current_date) ;;
   }
 
   dimension: is_before_current_day {
@@ -103,7 +134,7 @@ view: users {
 
   dimension: name {
     type: string
-    sql: CONCAT(${first_name}, ' ', ${last_name}) ;;
+    sql: initcap(CONCAT(${first_name}, ' ', ${last_name})) ;;
   }
 
   dimension: location {
@@ -128,6 +159,29 @@ view: users {
     type: string
     map_layer_name: us_states
     sql: ${TABLE}."STATE" ;;
+  }
+
+  dimension: city_state {
+    type: string
+    sql: CONCAT(${city},', ',${state}) ;;
+  }
+
+  dimension: state_region {
+    case: {
+      when: {
+        sql: ${state} in ('New Jersey', 'New York', 'Pennsylvania') ;;
+        label: "Mid-Atlantic"
+      }
+      when: {
+        sql: ${state} in ('Florida', 'Georgia', 'Louisiana') ;;
+        label: "Southeast"
+      }
+      when: {
+        sql: ${state} in ('California', 'Washington', 'Oregon') ;;
+        label: "Pacific"
+      }
+      else: "Somewhere"
+    }
   }
 
   dimension: traffic_source {
@@ -162,6 +216,18 @@ view: users {
     type: number
     drill_fields: [default_count_drill*]
     sql: LAG(${count_CMTD}, 1) OVER(ORDER BY ${created_month}) ;;
+  }
+
+  measure: avg_age {
+    type: average
+    sql: ${age} ;;
+  }
+
+  measure: count_new_users {
+    label: "Total Number of New Users"
+    type: count
+    filters: [is_new_user: "Yes"]
+    drill_fields: [age_demographic,gender]
   }
 
   set: default_count_drill {

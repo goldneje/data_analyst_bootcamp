@@ -3,11 +3,22 @@ view: products {
     ;;
   drill_fields: [id]
 
+  filter: select_brands {
+    type: string
+    suggest_dimension: brand
+    suggest_explore: products
+  }
+
   dimension: id {
     primary_key: yes
     hidden: yes
     type: number
     sql: ${TABLE}."ID" ;;
+  }
+
+  dimension: brand_comparison {
+    type: string
+    sql: case when {% condition select_brands %} ${brand} {% endcondition %} then ${brand} else 'All Other Brands' end;;
   }
 
   dimension: brand {

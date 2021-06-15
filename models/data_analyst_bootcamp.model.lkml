@@ -10,11 +10,18 @@ datagroup: data_analyst_bootcamp_default_datagroup {
   max_cache_age: "1 hour"
 }
 
+datagroup: order_items {
+  sql_trigger: select max($created_at) from order_items ;;
+  max_cache_age: "4 hours"
+}
+
 persist_with: data_analyst_bootcamp_default_datagroup
 
 # explore: distribution_centers {}
 
 # explore: etl_jobs {}
+
+explore: products {}
 
 explore: brand_comparison {
   from: order_items
@@ -76,6 +83,39 @@ explore: brand_comparison {
   }
 }
 
+explore: cust_order_patterns {
+  from: order_items
+  fields: [
+    ALL_FIELDS*
+  ]
+
+  join: order_sequence {
+    sql_on: ${order_sequence.order_id} = ${cust_order_patterns.order_id} ;;
+    relationship: one_to_many
+  }
+
+  join: inventory_items {
+    sql_on: ${cust_order_patterns.inventory_item_id} = ${inventory_items.id};;
+    relationship: many_to_one
+    fields: [inventory_items.cost_hidden, inventory_items.product_id]
+  }
+
+  join: products {
+    sql_on: ${inventory_items.product_id} = ${products.id} ;;
+    relationship: many_to_one
+  }
+
+  join: users {
+    sql_on: ${users.id} = ${order_sequence.user_id} ;;
+    relationship: one_to_one
+  }
+
+  join: order_sequence_two {
+    sql_on: ${cust_order_patterns.order_id} = ${order_sequence_two.order_id} ;;
+    relationship: many_to_one
+  }
+}
+
 explore: customer_order_patterns {
   from: order_items
   view_label: "Order Details"
@@ -116,6 +156,10 @@ explore: customer_order_patterns {
 }
 
 # This is here only to generate the derived table order_sequence_2
+explore: order_sequence {
+  hidden: yes
+}
+
 explore: order_sequence_1 {
   hidden: yes
 }
@@ -157,6 +201,12 @@ explore: order_items {
   #   filters: [order_items.created_year: "after 2 years ago"]
   #   unless: [users.id]
   # }
+  join: order_facts {
+    type: inner
+    sql_on: ${order_facts.order_id} = ${order_facts.order_id} ;;
+    relationship: many_to_one
+  }
+
   join: inventory_items {
     type: left_outer
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
@@ -191,7 +241,7 @@ explore: order_items {
 # }
 
 explore: customers {
-  view_name: customer_behavior
+  view_name: cust_behavior
   view_label: "Customer Behavior"
 
   # join: order_items {
@@ -204,7 +254,25 @@ explore: customers {
   join: users {
     view_label: "Customer Attributes"
     type: left_outer
-    sql_on: ${customer_behavior.id} = ${users.id} ;;
+    sql_on: ${cust_behavior.id} = ${users.id} ;;
+    relationship: many_to_one
+  }
+
+  join: order_items {
+    type: left_outer
+    sql_on: ${users.id} = ${order_items.user_id} ;;
+    relationship: one_to_many
+  }
+
+  join: inventory_items {
+    type: left_outer
+    sql_on: ${inventory_items.id} = ${order_items.inventory_item_id} ;;
+    relationship: one_to_one
+  }
+
+   join: products {
+    type: left_outer
+    sql_on: ${inventory_items.product_id} = ${products.id} ;;
     relationship: many_to_one
   }
 }
@@ -214,3 +282,39 @@ explore: customers {
   #   unless: [users.id, users.state]
   # }
 # }
+
+#explore: customer_patterns {
+ # from: cust_behavior
+
+ # join: users {
+ #   type: left_outer
+ #   sql_on: ${id} = ${users.id};;
+ #   relationship: many_to_one
+ # }
+
+ # join: order_items {
+  #  type: left_outer
+  #  sql_on: ${users.id} = ${order_items.user_id} ;;
+  #  relationship: one_to_many
+#  }
+
+ # join: inventory_items {
+  #  type: left_outer
+  #  sql_on: ${inventory_items.id} = ${order_items.inventory_item_id} ;;
+  #  relationship: one_to_one
+#  }
+
+ # join: products {
+  #  type: left_outer
+  # sql_on: ${inventory_items.product_id} = ${products.id} ;;
+  #  relationship: many_to_one
+#  }
+#}
+
+explore: users {}
+
+explore: top_10_brands {}
+
+explore: top_10_brand_rev {}
+
+explore: cust_behavior {}
