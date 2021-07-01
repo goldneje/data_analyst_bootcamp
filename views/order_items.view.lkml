@@ -114,6 +114,13 @@ view: order_items {
     sql: ${TABLE}."SHIPPED_AT" ;;
   }
 
+  dimension_group: days_to_deliver{
+    type: duration
+    intervals: [hour, day, week]
+    sql_start: ${shipped_raw} ;;
+    sql_end: ${delivered_raw} ;;
+  }
+
   dimension_group: fulfillment {
     description: "How long an order took to be shipped."
     type: duration
@@ -156,11 +163,14 @@ view: order_items {
     drill_fields: [detail*]
   }
 
+
+
   measure: count_order_id {
     label: "Number of Orders"
     type: count_distinct
     sql: ${order_id} ;;
   }
+
 
   measure: total_sale_price {
     description: "Total sales from items sold"
@@ -185,6 +195,12 @@ view: order_items {
     sql: ${total_sale_price} ;;
     value_format_name: usd
   }
+
+  # measure: total_sales_email {
+  #   type: sum
+  #   sql: ${sale_price} ;;
+  #   filters: [customer_behavior.ts_email: "Yes"]
+  # }
 
   measure: total_gross_revenue {
     description: "Total Revenue from completed sales (cancelled and returned orders excluded)"

@@ -27,6 +27,11 @@ view: customer_behavior {
 
   dimension: traffic_source {}
 
+  dimension: ts_email {
+    type:  yesno
+    sql: ${traffic_source}="Email" ;;
+  }
+
   dimension: sign_up_orig {
     hidden: yes
   }

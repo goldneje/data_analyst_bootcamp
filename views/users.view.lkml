@@ -14,6 +14,12 @@ view: users {
     sql: ${TABLE}."AGE" ;;
   }
 
+  dimension: age_buckets {
+    type: tier
+    tiers: [18,25,35,45,55,65,75,90]
+    sql: ${age} ;;
+  }
+
   dimension: age_tier {
     type: tier
     style: integer
@@ -24,6 +30,12 @@ view: users {
   dimension: city {
     type: string
     sql: ${TABLE}."CITY" ;;
+  }
+
+  dimension: city_state {
+    type:  string
+    sql: ${city} || ', ' || ${state} ;;
+
   }
 
   dimension: country {
