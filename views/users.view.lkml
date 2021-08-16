@@ -26,6 +26,11 @@ view: users {
     sql: ${TABLE}."CITY" ;;
   }
 
+  dimension: city_state {
+    type: string
+    sql: CONCAT(${city}, ', ', ${state}) ;;
+  }
+
   dimension: country {
     type: string
     map_layer_name: countries
