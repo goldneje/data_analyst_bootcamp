@@ -1,4 +1,4 @@
-connection: "snowlooker"
+connection: "looker_partner_demo"
 label: "Fashion.ly Case Study - EH"
 
 # include all the views
@@ -187,6 +187,7 @@ explore: order_items {
 # }
 
 explore: customers {
+  fields: [ALL_FIELDS*]
   view_name: customer_behavior
   view_label: "Customer Behavior"
 
