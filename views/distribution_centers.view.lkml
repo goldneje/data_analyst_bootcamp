@@ -1,27 +1,27 @@
 view: distribution_centers {
-  sql_table_name: "PUBLIC"."DISTRIBUTION_CENTERS"
+  sql_table_name: `looker-partners.thelook.distribution_centers`
     ;;
   drill_fields: [id]
 
   dimension: id {
     primary_key: yes
     type: number
-    sql: ${TABLE}."ID" ;;
+    sql: ${TABLE}.id ;;
   }
 
   dimension: latitude {
     type: number
-    sql: ${TABLE}."LATITUDE" ;;
+    sql: ${TABLE}.latitude ;;
   }
 
   dimension: longitude {
     type: number
-    sql: ${TABLE}."LONGITUDE" ;;
+    sql: ${TABLE}.longitude ;;
   }
 
   dimension: name {
     type: string
-    sql: ${TABLE}."NAME" ;;
+    sql: ${TABLE}.name ;;
   }
 
   measure: count {

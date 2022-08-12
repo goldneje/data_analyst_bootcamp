@@ -6,7 +6,7 @@ view: etl_jobs {
   dimension: id {
     primary_key: yes
     type: number
-    sql: ${TABLE}."ID" ;;
+    sql: ${TABLE}.id ;;
   }
 
   dimension_group: completed {
@@ -20,7 +20,7 @@ view: etl_jobs {
       quarter,
       year
     ]
-    sql: ${TABLE}."COMPLETED_AT" ;;
+    sql: ${TABLE}.completed_at ;;
   }
 
   measure: count {

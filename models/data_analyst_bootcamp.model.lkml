@@ -1,4 +1,4 @@
-connection: "snowlooker"
+connection: "looker_partner_demo"
 label: "Fashion.ly Case Study - EH"
 
 # include all the views
