@@ -1,5 +1,5 @@
 view: products {
-  sql_table_name: "PUBLIC"."PRODUCTS"
+  sql_table_name: `looker-partners.thelook.products`
     ;;
   drill_fields: [id]
 
@@ -7,12 +7,12 @@ view: products {
     primary_key: yes
     hidden: yes
     type: number
-    sql: ${TABLE}."ID" ;;
+    sql: ${TABLE}.id ;;
   }
 
   dimension: brand {
     type: string
-    sql: ${TABLE}."BRAND" ;;
+    sql: ${TABLE}.brand ;;
     drill_fields: [category, name]
     link: {
       label: "Search for {{ value }}"
@@ -28,7 +28,7 @@ view: products {
 
   dimension: category {
     type: string
-    sql: ${TABLE}."CATEGORY" ;;
+    sql: ${TABLE}.category ;;
   }
 
   dimension: brand_category_id {
@@ -40,35 +40,35 @@ view: products {
 
   dimension: cost {
     type: number
-    sql: ${TABLE}."COST" ;;
+    sql: ${TABLE}.cost ;;
     value_format_name: usd
   }
 
   dimension: department {
     type: string
-    sql: ${TABLE}."DEPARTMENT" ;;
+    sql: ${TABLE}.department ;;
   }
 
   dimension: distribution_center_id {
     type: number
     hidden: yes
-    sql: ${TABLE}."DISTRIBUTION_CENTER_ID" ;;
+    sql: ${TABLE}.distribution_center_id ;;
   }
 
   dimension: name {
     label: "Item Name"
     type: string
-    sql: ${TABLE}."NAME" ;;
+    sql: ${TABLE}.name ;;
   }
 
   dimension: retail_price {
     type: number
-    sql: ${TABLE}."RETAIL_PRICE" ;;
+    sql: ${TABLE}.retail_price ;;
   }
 
   dimension: sku {
     type: string
-    sql: ${TABLE}."SKU" ;;
+    sql: ${TABLE}.sku ;;
   }
 
   measure: count {

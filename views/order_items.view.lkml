@@ -1,5 +1,5 @@
 view: order_items {
-  sql_table_name: "PUBLIC"."ORDER_ITEMS"
+  sql_table_name: `looker-partners.thelook.order_items`
     ;;
   drill_fields: [id]
 
@@ -8,7 +8,7 @@ view: order_items {
     hidden: yes
     group_label: "IDs"
     type: number
-    sql: ${TABLE}."ID" ;;
+    sql: ${TABLE}.id ;;
   }
 
   dimension_group: created {
@@ -25,31 +25,31 @@ view: order_items {
       quarter,
       year
     ]
-    sql: ${TABLE}."CREATED_AT" ;;
+    sql: ${TABLE}.created_at ;;
   }
 
   dimension: is_before_current_day_in_year {
     hidden: yes
     type: yesno
-    sql: ${created_day_of_year} <= EXTRACT('day', GETDATE()) ;;
+    sql: ${created_day_of_year} <= EXTRACT(DAY FROM CURRENT_DATE) ;;
   }
 
   dimension: is_current_month {
     hidden: yes
     type: yesno
-    sql: ${created_month_num} = EXTRACT('month', GETDATE()) ;;
+    sql: ${created_month_num} = EXTRACT(MONTH FROM CURRENT_DATE) ;;
   }
 
   dimension: is_current_year {
     hidden: yes
     type: yesno
-    sql: ${created_year} = EXTRACT('year', GETDATE()) ;;
+    sql: ${created_year} = EXTRACT(YEAR FROM CURRENT_DATE) ;;
   }
 
   dimension: is_previous_year {
     hidden: yes
     type: yesno
-    sql: ${created_year} = EXTRACT('year', GETDATE()) - 1 ;;
+    sql: ${created_year} = EXTRACT(YEAR FROM CURRENT_DATE) - 1 ;;
   }
 
   dimension_group: delivered {
@@ -63,20 +63,20 @@ view: order_items {
       quarter,
       year
     ]
-    sql: ${TABLE}."DELIVERED_AT" ;;
+    sql: ${TABLE}.delivered_at ;;
   }
 
   dimension: inventory_item_id {
     type: number
     group_label: "IDs"
     hidden: yes
-    sql: ${TABLE}."INVENTORY_ITEM_ID" ;;
+    sql: ${TABLE}.inventory_item_id ;;
   }
 
   dimension: order_id {
     type: number
     group_label: "IDs"
-    sql: ${TABLE}."ORDER_ID" ;;
+    sql: ${TABLE}.order_id ;;
   }
 
 
@@ -91,13 +91,13 @@ view: order_items {
       quarter,
       year
     ]
-    sql: ${TABLE}."RETURNED_AT" ;;
+    sql: ${TABLE}.returned_at ;;
   }
 
   dimension: sale_price {
     hidden: yes
     type: number
-    sql: ${TABLE}."SALE_PRICE" ;;
+    sql: ${TABLE}.sale_price ;;
     value_format_name: usd
   }
 
@@ -112,7 +112,7 @@ view: order_items {
       quarter,
       year
     ]
-    sql: ${TABLE}."SHIPPED_AT" ;;
+    sql: ${TABLE}.shipped_at ;;
   }
 
   dimension_group: fulfillment {
@@ -129,14 +129,14 @@ view: order_items {
 
   dimension: status {
     type: string
-    sql: ${TABLE}."STATUS" ;;
+    sql: ${TABLE}.status ;;
   }
 
   dimension: user_id {
     type: number
     group_label: "IDs"
     hidden: no
-    sql: ${TABLE}."USER_ID" ;;
+    sql: ${TABLE}.user_id ;;
   }
 
   measure: order_sequence {
@@ -307,7 +307,7 @@ view: order_items {
     label: "Number of Customers"
     type: count_distinct
     sql: ${user_id} ;;
-    }
+  }
 
   measure: user_return_pct {
     group_label: "User Calculations"

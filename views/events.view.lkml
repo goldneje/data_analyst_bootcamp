@@ -1,5 +1,5 @@
 view: events {
-  sql_table_name: "PUBLIC"."EVENTS"
+  sql_table_name: `looker-partners.thelook.events`
     ;;
   drill_fields: [id]
 
@@ -7,23 +7,23 @@ view: events {
     primary_key: yes
     hidden: yes
     type: number
-    sql: ${TABLE}."ID" ;;
+    sql: ${TABLE}.id ;;
   }
 
   dimension: browser {
     type: string
-    sql: ${TABLE}."BROWSER" ;;
+    sql: ${TABLE}.browser ;;
   }
 
   dimension: city {
     type: string
-    sql: ${TABLE}."CITY" ;;
+    sql: ${TABLE}.city ;;
   }
 
   dimension: country {
     type: string
     map_layer_name: countries
-    sql: ${TABLE}."COUNTRY" ;;
+    sql: ${TABLE}.country ;;
   }
 
   dimension_group: created {
@@ -37,69 +37,69 @@ view: events {
       quarter,
       year
     ]
-    sql: ${TABLE}."CREATED_AT" ;;
+    sql: ${TABLE}.created_at ;;
   }
 
   dimension: event_type {
     type: string
-    sql: ${TABLE}."EVENT_TYPE" ;;
+    sql: ${TABLE}.event_type ;;
   }
 
   dimension: ip_address {
     type: string
-    sql: ${TABLE}."IP_ADDRESS" ;;
+    sql: ${TABLE}.ip_address ;;
   }
 
   dimension: latitude {
     type: number
-    sql: ${TABLE}."LATITUDE" ;;
+    sql: ${TABLE}.latitude ;;
   }
 
   dimension: longitude {
     type: number
-    sql: ${TABLE}."LONGITUDE" ;;
+    sql: ${TABLE}.longitude ;;
   }
 
   dimension: os {
     type: string
-    sql: ${TABLE}."OS" ;;
+    sql: ${TABLE}.os ;;
   }
 
   dimension: sequence_number {
     type: number
-    sql: ${TABLE}."SEQUENCE_NUMBER" ;;
+    sql: ${TABLE}.sequence_number ;;
   }
 
   dimension: session_id {
     type: string
-    sql: ${TABLE}."SESSION_ID" ;;
+    sql: ${TABLE}.session_id ;;
   }
 
   dimension: state {
     type: string
-    sql: ${TABLE}."STATE" ;;
+    sql: ${TABLE}.state ;;
   }
 
   dimension: traffic_source {
     type: string
-    sql: ${TABLE}."TRAFFIC_SOURCE" ;;
+    sql: ${TABLE}.traffic_source ;;
   }
 
   dimension: uri {
     type: string
-    sql: ${TABLE}."URI" ;;
+    sql: ${TABLE}.uri ;;
   }
 
   dimension: user_id {
     group_label: "IDs"
     type: number
     # hidden: yes
-    sql: ${TABLE}."USER_ID" ;;
+    sql: ${TABLE}.user_id ;;
   }
 
   dimension: zip {
     type: zipcode
-    sql: ${TABLE}."ZIP" ;;
+    sql: ${TABLE}.zip ;;
   }
 
   measure: count {
