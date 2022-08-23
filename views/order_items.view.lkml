@@ -31,25 +31,25 @@ view: order_items {
   dimension: is_before_current_day_in_year {
     hidden: yes
     type: yesno
-    sql: ${created_day_of_year} <= EXTRACT('day', GETDATE()) ;;
+    sql: ${created_day_of_year} <= EXTRACT(DAY FROM CURRENT_DATE) ;;
   }
 
   dimension: is_current_month {
     hidden: yes
     type: yesno
-    sql: ${created_month_num} = EXTRACT('month', GETDATE()) ;;
+    sql: ${created_month_num} = EXTRACT(MONTH FROM CURRENT_DATE) ;;
   }
 
   dimension: is_current_year {
     hidden: yes
     type: yesno
-    sql: ${created_year} = EXTRACT('year', GETDATE()) ;;
+    sql: ${created_year} = EXTRACT(YEAR FROM CURRENT_DATE) ;;
   }
 
   dimension: is_previous_year {
     hidden: yes
     type: yesno
-    sql: ${created_year} = EXTRACT('year', GETDATE()) - 1 ;;
+    sql: ${created_year} = EXTRACT(YEAR FROM CURRENT_DATE) - 1 ;;
   }
 
   dimension_group: delivered {
